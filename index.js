@@ -1,9 +1,18 @@
 const express = require('express')
 const app = express()
 const http = require('http')
+const cors = require('cors');
 const sequelize = require('./config/database');
 const port = 5000
 
+// CORS 설정 추가
+app.use(cors({
+    origin: 'http://localhost:3000', // 허용할 출처
+    methods: 'GET,POST', // 허용할 HTTP 메서드
+    credentials: true, // 쿠키를 포함한 요청을 허용
+}));
+
+// 기타 라우트 및 미들웨어 설정
 app.use(express.json());
 
 
@@ -28,6 +37,7 @@ sequelize.sync()
 
         // 라우터 생성
         //const homeRouter = require('./routes/home');
+        const userRouter = require('./routes/user');
 
         app.get('/', (req, res) => {
             res.send('hello node');
@@ -35,6 +45,7 @@ sequelize.sync()
 
         // 라우터 연결
         //app.use('/home', homeRouter);
+        app.use('/user', userRouter);
 
         app.listen(port, function() {
             console.log(`listening on *:${port}`);
