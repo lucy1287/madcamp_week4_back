@@ -12,5 +12,9 @@ router.post('/create/:user_no', (req, res) => {
 
 
 // 새로운 유저그룹 생성 라우트
+router.post('/join/:user_no', (req, res) => {
+    const user_no = req.params.user_no;
+    insertUserGroupAndPaper(req, user_no, res);
+})
 
 module.exports = router;

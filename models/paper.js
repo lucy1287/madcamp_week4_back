@@ -24,7 +24,7 @@ const PAPER = sequelize.define('PAPER', {
         allowNull: false,
         references: {
             model: USER,
-            key: 'user_no'
+            key: 'USER_NO'
         }
     },
     group_no: {
@@ -32,7 +32,7 @@ const PAPER = sequelize.define('PAPER', {
         allowNull: false,
         references: {
             model: GROUP,
-            key: 'group_no'
+            key: 'GROUP_NO'
         }
     },
     guest_no: {
@@ -40,12 +40,12 @@ const PAPER = sequelize.define('PAPER', {
         allowNull: true,
         references: {
             model: GUEST, // 참조할 모델 (GROUP 모델)
-            key: 'guest_no'   // 참조할 속성 (User 모델의 기본 키)
+            key: 'GUEST_NO'   // 참조할 속성 (User 모델의 기본 키)
         }
     }
     // 추가적인 속성들을 필요에 따라 정의 가능
 }, {
-    tableName: 'GROUP',
+    tableName: 'PAPER',
     timestamps: false
 });
 

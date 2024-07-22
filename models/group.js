@@ -23,6 +23,10 @@ const GROUP = sequelize.define('GROUP', {
     created_at: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW
+    },
+    invite_code: {
+        type: DataTypes.STRING,
+        allowNull: true
     }
     // 추가적인 속성들을 필요에 따라 정의 가능
 }, {
