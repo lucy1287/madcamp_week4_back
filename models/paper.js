@@ -21,7 +21,7 @@ const PAPER = sequelize.define('PAPER', {
     },
     user_no: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: true,
         references: {
             model: USER,
             key: 'USER_NO'

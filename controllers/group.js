@@ -1,5 +1,5 @@
 const sequelize = require('../config/database');
-const { USER, GROUP, USER_GROUP, PAPER } = require('../models/associations');
+const { USER, GROUP, USER_GROUP, PAPER, LETTER} = require('../models/associations');
 
 // 유저 번호를 받아서 해당 유저가 속한 그룹들을 조회하는 함수
 exports.getGroupsByUserNo = async function(req, user_no, res) {
@@ -34,12 +34,12 @@ exports.getGroupsByUserNo = async function(req, user_no, res) {
 exports.insertGroupAndUserGroup = async function(req, user_no, res) {
     const t = await sequelize.transaction(); // 트랜잭션 시작
     try {
-        const { title } = req.body;
+        const { title, cardinality_yn } = req.body;
 
         // 그룹 생성
         let group = await GROUP.create({
             title: title,
-            cardinality_yn: 'Y'
+            cardinality_yn: cardinality_yn
         }, { transaction: t });
         // 그룹 생성 후 자동 생성된 group_no 가져오기
         let groupNo = group.group_no;
@@ -60,17 +60,25 @@ exports.insertGroupAndUserGroup = async function(req, user_no, res) {
         }, { transaction: t });
 
 
-        // User 테이블에서 user_no로 nickname을 조회
-        let user = await USER.findOne({ where: { user_no: user_no }, transaction: t });
-        if (!user) {
-            return res.status(404).json({ message: '유저를 찾을 수 없습니다.' });
+        if(cardinality_yn == "Y") {
+            // User 테이블에서 user_no로 nickname을 조회
+            let user = await USER.findOne({where: {user_no: user_no}, transaction: t});
+            if (!user) {
+                return res.status(404).json({message: '유저를 찾을 수 없습니다.'});
+            }
+            // PAPER 테이블에 데이터 삽입
+            await PAPER.create({
+                title: `${user.nickname}의 롤링페이퍼`,
+                group_no: groupNo,
+                user_no: user_no
+            }, {transaction: t});
         }
-        // PAPER 테이블에 데이터 삽입
-        await PAPER.create({
-            title: `${user.nickname}의 롤링페이퍼`,
-            group_no: groupNo,
-            user_no: user_no
-        }, { transaction: t });
+        else if(cardinality_yn == "N"){
+            await PAPER.create({
+                title: `롤링페이퍼`,
+                group_no: groupNo
+            }, {transaction: t});
+        }
 
         await t.commit(); // 트랜잭션 커밋
 
@@ -97,31 +105,66 @@ exports.insertUserGroupAndPaper = async function(req, user_no, res) {
             return res.status(404).json({ message: '유효하지 않은 초대 코드입니다.' });
         }
         const groupNo = group.group_no;
+        const cardinalityYn = group.cardinality_yn;
+
+        if(cardinalityYn == "Y"){
+            // USER_GROUP 테이블에 데이터 삽입
+            await USER_GROUP.create({
+                creater_yn: "N",
+                group_no: groupNo,
+                user_no: user_no
+            }, { transaction: t });
 
 
-        // USER_GROUP 테이블에 데이터 삽입
-        await USER_GROUP.create({
-            creater_yn: "N",
-            group_no: groupNo,
-            user_no: user_no
-        }, { transaction: t });
+            // User 테이블에서 user_no로 nickname을 조회
+            let user = await USER.findOne({ where: { user_no: user_no }, transaction: t });
+            if (!user) {
+                return res.status(404).json({ message: '유저를 찾을 수 없습니다.' });
+            }
+            // PAPER 테이블에 데이터 삽입
+            await PAPER.create({
+                title: `${user.nickname}의 롤링페이퍼`,
+                group_no: groupNo,
+                user_no: user_no
+            }, { transaction: t });
 
+            await t.commit(); // 트랜잭션 커밋
 
-        // User 테이블에서 user_no로 nickname을 조회
-        let user = await USER.findOne({ where: { user_no: user_no }, transaction: t });
-        if (!user) {
-            return res.status(404).json({ message: '유저를 찾을 수 없습니다.' });
+            res.status(201).json({ message: '유저그룹과 롤링페이퍼가 성공적으로 추가되었습니다.' });
         }
-        // PAPER 테이블에 데이터 삽입
-        await PAPER.create({
-            title: `${user.nickname}의 롤링페이퍼`,
-            group_no: groupNo,
-            user_no: user_no
-        }, { transaction: t });
+        else if(cardinalityYn == "N") {
 
-        await t.commit(); // 트랜잭션 커밋
+            // 해당 그룹에 속하는 PAPER를 조회
+            const paper = await PAPER.findOne({
+                where: { group_no: groupNo },
+                transaction: t
+            });
 
-        res.status(201).json({ message: '유저그룹과 롤링페이퍼가 성공적으로 추가되었습니다.' });
+            if (!paper) {
+                await t.commit(); // 트랜잭션 커밋
+                return res.status(404).json({ message: '해당 그룹의 롤링페이퍼를 찾을 수 없습니다.' });
+            }
+
+            // PAPER와 LETTER를 조인하여 LETTER 조회
+            const letters = await LETTER.findAll({
+                where: { paper_no: paper.paper_no },
+                order: [['created_at', 'ASC']],
+                transaction: t
+            });
+
+            if (letters.length === 0) {
+                await t.commit(); // 트랜잭션 커밋
+                return res.status(404).json({ message: '해당 롤링페이퍼의 글을 찾을 수 없습니다.' });
+            }
+
+            await t.commit(); // 트랜잭션 커밋
+            res.status(200).json({
+                paper: {
+                    title: paper.title,
+                    letters: letters
+                }
+            });
+        }
 
     } catch (err) {
         await t.rollback(); // 오류 발생 시 트랜잭션 롤백
