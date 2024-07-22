@@ -35,7 +35,7 @@ exports.getLettersByPaperNo = async function(req, res) {
 exports.insertLetter = async function(req, user_no, res) {
     const t = await sequelize.transaction(); // 트랜잭션 시작
     try {
-        const { paper_no, content } = req.body;
+        const { paper_no, content, background_no } = req.body;
 
         // 롤링페이퍼가 존재하는지 확인
         const paper = await PAPER.findOne({
@@ -51,6 +51,7 @@ exports.insertLetter = async function(req, user_no, res) {
         const letter = await LETTER.create({
             paper_no: paper_no,
             content: content,
+            background_no: background_no,
             user_no: user_no
         }, { transaction: t });
 
