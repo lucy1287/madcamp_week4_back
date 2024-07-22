@@ -14,7 +14,7 @@ const GROUP = sequelize.define('GROUP', {
     },
     due_date: {
         type: DataTypes.DATE,
-        allowNull: false
+        defaultValue: DataTypes.NOW
     },
     cardinality_yn: {
         type: DataTypes.STRING,

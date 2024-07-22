@@ -38,6 +38,8 @@ sequelize.sync()
         // 라우터 생성
         //const homeRouter = require('./routes/home');
         const userRouter = require('./routes/user');
+        const groupRouter = require('./routes/group');
+        const paperRouter = require('./routes/paper');
 
         app.get('/', (req, res) => {
             res.send('hello node');
@@ -46,6 +48,8 @@ sequelize.sync()
         // 라우터 연결
         //app.use('/home', homeRouter);
         app.use('/user', userRouter);
+        app.use('/group', groupRouter);
+        app.use('/paper', paperRouter);
 
         app.listen(port, function() {
             console.log(`listening on *:${port}`);

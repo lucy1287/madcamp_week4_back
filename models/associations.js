@@ -6,35 +6,32 @@ const LETTER = require('./letter');
 const GUEST = require('./guest');
 
 // USER-GROUP 관계
-USER.hasMany(USER_GROUP, { foreignKey: 'user_no', as: 'USER_GROUP' });
-USER_GROUP.belongsTo(USER, { foreignKey: 'user_no', as: 'USER' });
+USER.hasMany(USER_GROUP, { foreignKey: 'user_no', as: 'userGroups' });
+USER_GROUP.belongsTo(USER, { foreignKey: 'user_no', as: 'user' });
 
-GROUP.hasMany(USER_GROUP, { foreignKey: 'group_no', as: 'USER_GROUP' });
-USER_GROUP.belongsTo(GROUP, { foreignKey: 'group_no', as: 'GROUP' });
+GROUP.hasMany(USER_GROUP, { foreignKey: 'group_no', as: 'groupUsers' });
+USER_GROUP.belongsTo(GROUP, { foreignKey: 'group_no', as: 'group' });
 
-// GUEST 테이블이 다
-USER.hasMany(GUEST, { foreignKey: 'user_no', as: 'GUEST' });
-GUEST.belongsTo(USER, { foreignKey: 'user_no', as: 'USER' });
+// GUEST 관계
+USER.hasMany(GUEST, { foreignKey: 'user_no', as: 'userGuests' });
+GUEST.belongsTo(USER, { foreignKey: 'user_no', as: 'guestUser' });
 
-GROUP.hasMany(PAPER, { foreignKey: 'group_no', as: 'GUEST' });
-GUEST.belongsTo(GROUP, { foreignKey: 'group_no', as: 'GROUP' });
+GROUP.hasMany(GUEST, { foreignKey: 'group_no', as: 'groupGuests' });
+GUEST.belongsTo(GROUP, { foreignKey: 'group_no', as: 'guestGroup' });
 
-// PAPER 테이블이 다
-USER.hasMany(PAPER, { foreignKey: 'user_no', as: 'PAPER' });
-PAPER.belongsTo(USER, { foreignKey: 'user_no', as: 'USER' });
+// PAPER 관계
+USER.hasMany(PAPER, { foreignKey: 'user_no', as: 'userPapers' });
+PAPER.belongsTo(USER, { foreignKey: 'user_no', as: 'paperUser' });
 
-GROUP.hasMany(PAPER, { foreignKey: 'group_no', as: 'PAPER' });
-PAPER.belongsTo(GROUP, { foreignKey: 'group_no', as: 'GROUP' });
+GROUP.hasMany(PAPER, { foreignKey: 'group_no', as: 'groupPapers' });
+PAPER.belongsTo(GROUP, { foreignKey: 'group_no', as: 'paperGroup' });
 
-GUEST.hasMany(PAPER, { foreignKey: 'guest_no', as: 'PAPER' });
-PAPER.belongsTo(GUEST, { foreignKey: 'guest_no', as: 'GUEST' });
+GUEST.hasMany(PAPER, { foreignKey: 'guest_no', as: 'guestPapers' });
+PAPER.belongsTo(GUEST, { foreignKey: 'guest_no', as: 'paperGuest' });
 
-// LETTER 테이블이 다
-USER.hasMany(PAPER, { foreignKey: 'user_no', as: 'PAPER' });
-PAPER.belongsTo(USER, { foreignKey: 'user_no', as: 'USER' });
-
-PAPER.hasMany(LETTER, { foreignKey: 'paper_no', as: 'LETTER' });
-LETTER.belongsTo(PAPER, { foreignKey: 'paper_no', as: 'PAPER' });
+// LETTER 관계
+PAPER.hasMany(LETTER, { foreignKey: 'paper_no', as: 'paperLetters' });
+LETTER.belongsTo(PAPER, { foreignKey: 'paper_no', as: 'letterPaper' });
 
 module.exports = {
     USER,
