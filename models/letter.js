@@ -2,6 +2,8 @@ const { DataTypes } = require('sequelize');
 const sequelize = require("../config/database");
 const USER = require("./user");
 const PAPER = require("./paper");
+const BACKGROUND = require("./background");
+const COLOR = require("./color");
 
 const LETTER = sequelize.define('LETTER', {
     // LETTER 모델의 속성들을 정의
@@ -32,6 +34,22 @@ const LETTER = sequelize.define('LETTER', {
         references: {
             model: PAPER,
             key: 'paper_no'
+        }
+    },
+    background_no: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+            model: BACKGROUND,
+            key: 'background_no'
+        }
+    },
+    color_no: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+            model: COLOR,
+            key: 'color_no'
         }
     }
     // 추가적인 속성들을 필요에 따라 정의 가능
