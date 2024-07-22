@@ -16,7 +16,7 @@ const LETTER = sequelize.define('LETTER', {
     },
     created_at: {
         type: DataTypes.DATE,
-        allowNull: false
+        defaultValue: DataTypes.NOW
     },
     user_no: {
         type: DataTypes.INTEGER,

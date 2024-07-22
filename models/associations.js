@@ -30,6 +30,9 @@ GUEST.hasMany(PAPER, { foreignKey: 'guest_no', as: 'guestPapers' });
 PAPER.belongsTo(GUEST, { foreignKey: 'guest_no', as: 'paperGuest' });
 
 // LETTER 관계
+USER.hasMany(LETTER, { foreignKey: 'user_no', as: 'userLetters' });
+LETTER.belongsTo(USER, { foreignKey: 'user_no', as: 'letterUser' });
+
 PAPER.hasMany(LETTER, { foreignKey: 'paper_no', as: 'paperLetters' });
 LETTER.belongsTo(PAPER, { foreignKey: 'paper_no', as: 'letterPaper' });
 
