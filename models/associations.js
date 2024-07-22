@@ -5,6 +5,7 @@ const PAPER = require('./paper');
 const LETTER = require('./letter');
 const GUEST = require('./guest');
 const BACKGROUND = require('./background');
+const COLOR = require('./color');
 
 // USER-GROUP 관계
 USER.hasMany(USER_GROUP, { foreignKey: 'user_no', as: 'userGroups' });
@@ -40,6 +41,9 @@ LETTER.belongsTo(PAPER, { foreignKey: 'paper_no', as: 'letterPaper' });
 BACKGROUND.hasMany(LETTER, { foreignKey: 'background_no', as: 'backgroundLetters' });
 LETTER.belongsTo(BACKGROUND, { foreignKey: 'background_no', as: 'letterBackground' });
 
+COLOR.hasMany(LETTER, { foreignKey: 'color_no', as: 'colorLetters' });
+LETTER.belongsTo(COLOR, { foreignKey: 'color_no', as: 'letterColor' });
+
 module.exports = {
     USER,
     GROUP,
@@ -47,5 +51,6 @@ module.exports = {
     GUEST,
     PAPER,
     LETTER,
-    BACKGROUND
+    BACKGROUND,
+    COLOR
 };
