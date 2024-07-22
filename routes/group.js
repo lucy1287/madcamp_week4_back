@@ -1,8 +1,14 @@
 // routes/group.js
 const express = require('express');
 const router = express.Router();
+const { getGroupsByUserNo } = require('../controllers/group');
 const { insertGroupAndUserGroup } = require('../controllers/group');
 const { insertUserGroupAndPaper } = require('../controllers/group');
+
+router.get('/:user_no', (req, res) => {
+    const user_no = req.params.user_no;
+    getGroupsByUserNo(req, user_no, res);
+})
 
 // 새로운 그룹 생성 라우트
 router.post('/create/:user_no', (req, res) => {

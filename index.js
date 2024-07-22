@@ -3,6 +3,7 @@ const app = express()
 const http = require('http')
 const cors = require('cors');
 const sequelize = require('./config/database');
+const paperRouter = require("./routes/paper");
 const port = 5000
 
 // CORS 설정 추가
@@ -40,6 +41,7 @@ sequelize.sync()
         const userRouter = require('./routes/user');
         const groupRouter = require('./routes/group');
         const paperRouter = require('./routes/paper');
+        const letterRouter = require('./routes/letter');
 
         app.get('/', (req, res) => {
             res.send('hello node');
@@ -50,6 +52,7 @@ sequelize.sync()
         app.use('/user', userRouter);
         app.use('/group', groupRouter);
         app.use('/paper', paperRouter);
+        app.use('/letter', letterRouter);
 
         app.listen(port, function() {
             console.log(`listening on *:${port}`);

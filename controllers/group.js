@@ -1,6 +1,35 @@
 const sequelize = require('../config/database');
 const { USER, GROUP, USER_GROUP, PAPER } = require('../models/associations');
 
+// 유저 번호를 받아서 해당 유저가 속한 그룹들을 조회하는 함수
+exports.getGroupsByUserNo = async function(req, user_no, res) {
+
+    try {
+        const userGroups = await USER_GROUP.findAll({
+            where: { user_no: user_no },
+            include: [{
+                model: GROUP,
+                as: 'group',
+                attributes: [
+                    'group_no',
+                    'title',
+                    'due_date',
+                    'cardinality_yn',
+                    'invite_code',
+                ]
+            }]
+        });
+
+        // 각 USER_GROUP 인스턴스에서 GROUP 객체를 추출
+        const groups = userGroups.map(userGroup => userGroup.group);
+
+        res.status(200).json(groups);
+    } catch (err) {
+        console.error(err); // 에러를 콘솔에 출력하여 원인 확인
+        res.status(500).json({ message: '그룹 조회 중 오류가 발생했습니다.', error: err.message });
+    }
+};
+
 // 그룹 생성자가 그룹 추가하는 함수
 exports.insertGroupAndUserGroup = async function(req, user_no, res) {
     const t = await sequelize.transaction(); // 트랜잭션 시작
