@@ -1,5 +1,5 @@
 const sequelize = require('../config/database');
-const { USER, GROUP, USER_GROUP, PAPER, LETTER} = require('../models/associations');
+const { USER, GROUP, USER_GROUP, PAPER, LETTER, GUEST } = require('../models/associations');
 
 // 유저 번호를 받아서 해당 유저가 속한 그룹들을 조회하는 함수
 exports.getGroupsByUserNo = async function(req, user_no, res) {
@@ -34,7 +34,7 @@ exports.getGroupsByUserNo = async function(req, user_no, res) {
 exports.insertGroupAndUserGroup = async function(req, user_no, res) {
     const t = await sequelize.transaction(); // 트랜잭션 시작
     try {
-        const { title, cardinality_yn } = req.body;
+        const { title, cardinality_yn, guest_name } = req.body;
 
         // 그룹 생성
         let group = await GROUP.create({
@@ -74,9 +74,16 @@ exports.insertGroupAndUserGroup = async function(req, user_no, res) {
             }, {transaction: t});
         }
         else if(cardinality_yn == "N"){
-            await PAPER.create({
-                title: `롤링페이퍼`,
+            let guest = await GUEST.create({
+                name: guest_name,
                 group_no: groupNo
+            }, {transaction: t});
+            let guestNo = guest.guest_no;
+
+            await PAPER.create({
+                title: `${guest_name}님의 롤링페이퍼`,
+                group_no: groupNo,
+                guest_no: guestNo
             }, {transaction: t});
         }
 
