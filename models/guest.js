@@ -16,15 +16,7 @@ const GUEST = sequelize.define('GUEST', {
     },
     created_at: {
         type: DataTypes.DATE,
-        allowNull: false
-    },
-    user_no: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-            model: USER,
-            key: 'user_no'
-        }
+        defaultValue: DataTypes.NOW
     },
     group_no: {
         type: DataTypes.INTEGER,

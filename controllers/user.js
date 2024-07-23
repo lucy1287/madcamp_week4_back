@@ -9,7 +9,7 @@ app.use(bodyParser.json());
 
 const JWT_SECRET = "2d8a5e0c-98d9-4b3e-8cbb-2f5b71a4d7b8";
 let kakaoId = "";
-let userInfo;
+let userNo;
 
 exports.loginUser = async function(req, res) {
     // const { access_token } = req.body;
@@ -43,9 +43,11 @@ exports.loginUser = async function(req, res) {
                 nickname,
                 photo
             });
+            userNo = user.user_no;
         } else {
             // 사용자 정보 업데이트
            // await User.updateOne({ kakaoId }, { ...userInfo });
+            userNo = user.user_no;
         }
 
         // JWT 토큰 생성
@@ -53,7 +55,8 @@ exports.loginUser = async function(req, res) {
 
         // 클라이언트에 JWT 토큰과 사용자 정보 반환
         res.status(201).json({
-            token
+            user_no: userNo,
+            token: token
         });
 
     } catch (error) {
