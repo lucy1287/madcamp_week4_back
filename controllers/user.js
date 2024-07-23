@@ -35,7 +35,7 @@ exports.loginUser = async function(req, res) {
         const { kakao_id, nickname, photo } = req.body;
 
         // 사용자 정보 검증 및 DB 저장 로직 (DB 연결 필요)
-        let user = await User.findOne({ kakaoId });
+        let user = await User.findOne({ where: { kakao_id } });
         if (!user) {
             // 신규 사용자 등록
             user = await User.create({
