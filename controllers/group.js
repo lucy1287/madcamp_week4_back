@@ -33,6 +33,7 @@ exports.getGroupsByUserNo = async function(req, user_no, res) {
 // 그룹 생성자가 그룹 추가하는 함수
 exports.insertGroupAndUserGroup = async function(req, user_no, res) {
     const t = await sequelize.transaction(); // 트랜잭션 시작
+    let paper;
     try {
         const { title, cardinality_yn, guest_name } = req.body;
 
@@ -67,7 +68,7 @@ exports.insertGroupAndUserGroup = async function(req, user_no, res) {
                 return res.status(404).json({message: '유저를 찾을 수 없습니다.'});
             }
             // PAPER 테이블에 데이터 삽입
-            await PAPER.create({
+            paper = await PAPER.create({
                 title: `${user.nickname}의 롤링페이퍼`,
                 group_no: groupNo,
                 user_no: user_no
@@ -80,7 +81,7 @@ exports.insertGroupAndUserGroup = async function(req, user_no, res) {
             }, {transaction: t});
             let guestNo = guest.guest_no;
 
-            await PAPER.create({
+            paper = await PAPER.create({
                 title: `${guest_name}님의 롤링페이퍼`,
                 group_no: groupNo,
                 guest_no: guestNo
@@ -89,7 +90,7 @@ exports.insertGroupAndUserGroup = async function(req, user_no, res) {
 
         await t.commit(); // 트랜잭션 커밋
 
-        res.status(201).json({ message: '그룹이 성공적으로 추가되었습니다.' });
+        res.status(201).json({ groupNo, paper });
 
     } catch (err) {
         await t.rollback(); // 오류 발생 시 트랜잭션 롤백
