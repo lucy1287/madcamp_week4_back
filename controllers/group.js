@@ -138,7 +138,7 @@ exports.insertUserGroupAndPaper = async function(req, user_no, res) {
 
             await t.commit(); // 트랜잭션 커밋
 
-            res.status(201).json({ message: '유저그룹과 롤링페이퍼가 성공적으로 추가되었습니다.' });
+            res.status(201).json({ group_no: groupNo });
         }
         else if(cardinalityYn == "N") {
 
@@ -150,7 +150,7 @@ exports.insertUserGroupAndPaper = async function(req, user_no, res) {
 
             if (!paper) {
                 await t.commit(); // 트랜잭션 커밋
-                return res.status(404).json({ message: '해당 그룹의 롤링페이퍼를 찾을 수 없습니다.' });
+                return res.status(404).json({ paper });
             }
 
             // PAPER와 LETTER를 조인하여 LETTER 조회

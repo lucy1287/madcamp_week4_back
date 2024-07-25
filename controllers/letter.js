@@ -1,5 +1,5 @@
 const sequelize = require('../config/database');
-const { USER, PAPER, LETTER } = require('../models/associations');
+const { USER, PAPER, LETTER, BACKGROUND, COLOR } = require('../models/associations');
 
 exports.getLettersByPaperNo = async function(req, res) {
     try {
@@ -10,12 +10,24 @@ exports.getLettersByPaperNo = async function(req, res) {
         }
 
         const letters = await LETTER.findAll({
-            where: {paper_no: paper_no},
-            include: [{
-                model: USER,
-                as: 'letterUser',
-                attributes: ['nickname'] // 필요한 USER 컬럼만 가져옵니다.
-            }],
+            where: { paper_no: paper_no },
+            include: [
+                {
+                    model: USER,
+                    as: 'letterUser',
+                    attributes: ['nickname']
+                },
+                {
+                    model: BACKGROUND,
+                    as: 'letterBackground',
+                    attributes: ['background_url']
+                },
+                {
+                    model: COLOR,
+                    as: 'letterColor',
+                    attributes: ['color_hex_code']
+                }
+            ],
             order: [['created_at', 'ASC']]
         });
 
